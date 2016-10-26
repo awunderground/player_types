@@ -19,15 +19,32 @@ rosters <- rosters %>%
     mutate(key = paste0(key, "_roster")) %>%
     mutate(key = paste0("http://vcuathletics.com/sports/mbkb/archives/", key))
 
-rosterBuilder <- function () {
-    vcu1979 <- read_html("http://vcuathletics.com/sports/mbkb/archives/197879_roster")
+
+
+
+# Pulls a single year's roster from the VCU Athletic's website
+rosterScraper <- function (link) {
+    temp <- read_html(as.character(link))
     
-    roster2016 <- vcu2016 %>% 
+    temp <- temp %>% 
         html_nodes("td:nth-child(2) , tr+ tr td:nth-child(2) div") %>%
         html_text() 
     
-    }
+    return(temp)
+}
     
+vcu1979 <- rosterScraper(rosters[1, 3])
+
+players <- NULL
+for (i in 1:nrow(rosters)) {
+    
+    temp <- rosterScraper(rosters[i, 3])
+    
+    players <- c(players, temp)
+}
+
+
+
 
 
 
