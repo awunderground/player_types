@@ -1,1 +1,1 @@
-# player_types
+# VCU Basketball Player Clustering
