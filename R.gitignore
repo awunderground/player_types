@@ -1,0 +1,13 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session data files
+.Rdata
+
+# knitr and R markdown default cache directories
+*_cache
+cache
+
+#
+sellhome.csv
