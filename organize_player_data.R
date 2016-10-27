@@ -11,6 +11,7 @@ end.year <- start.year + 1
 
 rosters <- data_frame(start.year, end.year)
 
+# 197879 - 200910 Rosters
 rosters <- rosters %>%
     mutate(start.year = as.character(start.year)) %>%
     mutate(end.year = as.character(end.year)) %>%
@@ -22,25 +23,66 @@ rosters <- rosters %>%
 
 
 
+
+rosters.diff <- rosters %>%
+    filter(end.year > 2010) %>%
+    mutate(key = paste0(start.year, key)) %>%
+    mutate(key = paste0(key, "_roster")) %>%
+    mutate(key = paste0("http://vcuathletics.com/sports/mbkb/archives/", key))
+
+
+
+http://vcuathletics.com/sports/mbkb/2010-11/roster
+http://vcuathletics.com/sports/mbkb/2011-12/roster
+http://vcuathletics.com/sports/mbkb/2012-13/roster
+http://vcuathletics.com/sports/mbkb/2013-14/roster
+http://vcuathletics.com/sports/mbkb/2014-15/roster
+
+
+
+
+
 # Pulls a single year's roster from the VCU Athletic's website
 rosterScraper <- function (link) {
     temp <- read_html(as.character(link))
     
-    temp <- temp %>% 
+    link <- as.character(link)
+    
+    jersey <- temp %>% 
+        html_nodes("td:nth-child(1) , tr+ tr td:nth-child(1) div") %>%
+        html_text() 
+    
+    player <- temp %>% 
         html_nodes("td:nth-child(2) , tr+ tr td:nth-child(2) div") %>%
         html_text() 
     
-    return(temp)
-}
+    class <- temp %>% 
+        html_nodes("td:nth-child(3) , tr+ tr td:nth-child(3) div") %>%
+        html_text()  
+        
+    height <- temp %>% 
+        html_nodes("td:nth-child(4) , tr+ tr td:nth-child(4) div") %>%
+        html_text()      
     
-vcu1979 <- rosterScraper(rosters[1, 3])
+    weight <- temp %>% 
+        html_nodes("td:nth-child(5) , tr+ tr td:nth-child(5) div") %>%
+        html_text()  
+    
+    boom <- cbind(link, jersey, player, class, height, weight)
+    
+    return(boom)
+}
 
+# Loop through __ and __ and pull name, 
+# No 1986-1987
+# No 1988-1989
+# No 1994-1995
 players <- NULL
-for (i in 1:nrow(rosters)) {
+for (i in 1:32) {
     
     temp <- rosterScraper(rosters[i, 3])
     
-    players <- c(players, temp)
+    players <- rbind(players, temp)
 }
 
 
@@ -50,15 +92,20 @@ for (i in 1:nrow(rosters)) {
 
 
 
+
+
+
+
+
+
+
+
+rbind(players, vcu1979)
 vcu1979 <- read_html("http://vcuathletics.com/sports/mbkb/archives/197879_roster")
 
 roster1979 <- vcu1979 %>% 
     html_nodes("td:nth-child(2) , tr+ tr td:nth-child(2) div") %>%
     html_text() 
-
-
-
-
 
 
 # Historical Roster
