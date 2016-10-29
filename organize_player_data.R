@@ -1,4 +1,5 @@
 library(rvest)
+library(stringr)
 library(tidyverse)
 
 
@@ -67,7 +68,8 @@ players <- tbl_df(players)
 # Remove rows that contain "\n" which are the superfluous column headings and 
 # duplicate players 
 players <- players %>%
-    filter(!grepl("\n", player))
+    filter(!grepl("\n", player)) %>%
+    mutate(season = as.numeric(substr(link, 46, 49)) + 1)
 
 # Web addresses for 2010 - 2016 seasons 
 start.year <- 2010:2015
@@ -125,12 +127,20 @@ rosterScraperb(rostersb[4, 3]),
 rosterScraperb(rostersb[5, 3]),
 rosterScraperb(rostersb[6, 3]))
 
-boom <- bind_rows(players, playersb)
+playersb <- playersb %>%
+    mutate(season = as.numeric(substr(link, 37, 40)) + 1)
+
+players <- bind_rows(players, playersb)
+
+# Clean up the players data frame
+
+boom <- players %>%
+    mutate_all(str_trim) %>%
+    mutate(jersey = as.numeric(jersey))
 
 
 
-
-
+# create redshirt dummy
 
 
 
