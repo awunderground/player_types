@@ -178,11 +178,22 @@ players <- bind_rows(playersa, playersb, vcu1994)
 boom <- players %>%
     filter(!grepl("\n", player)) %>%
     mutate_all(str_trim) %>%
-    mutate(jersey = as.numeric(jersey))
+    mutate(jersey = as.numeric(jersey)) %>%
+    mutate(redshirt = ifelse(grepl("R", class), 1, 0)) %>% # Redshirt Flag
+    mutate(class.c = "") %>%
+    mutate(class.c = ifelse(grepl("Fr", class), "Freshman", class.c)) %>%
+    mutate(class.c = ifelse(grepl("So", class), "Sophomore", class.c)) %>%
+    mutate(class.c = ifelse(grepl("Jr", class), "Junior", class.c)) %>%
+    mutate(class.c = ifelse(grepl("Junior", class), "Junior", class.c)) %>%
+    mutate(class.c = ifelse(grepl("sr", class), "Senior", class.c)) %>%
+    mutate(class.c = ifelse(grepl("Sr", class), "Senior", class.c)) %>%
+    mutate(class.c = ifelse(grepl("Senior", class), "Senior", class.c)) %>%
+    filter(!(player == "Joey Rodriguez" & season < 2008))
 
-# 1994
+write.csv(players, "players.csv")
 
-# create redshirt dummy
+
+
 # 1989 Joey Rodriguez
 
 
