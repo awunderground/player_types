@@ -4,14 +4,13 @@ library(tidyverse)
 
 # Rosters
 
-# Objective 1: longitudinal roster record for VCU 1978-1979 to present 
 
+# Web addresses for 197879 - 200910 Rosters
 start.year <- 1978:2009
 end.year <- start.year + 1
 
 rosters <- data_frame(start.year, end.year)
 
-# Web addresses for 197879 - 200910 Rosters
 rosters <- rosters %>%
     mutate(start.year = as.character(start.year)) %>%
     mutate(end.year = as.character(end.year)) %>%
@@ -19,21 +18,6 @@ rosters <- rosters %>%
     mutate(key = paste0(start.year, key)) %>%
     mutate(key = paste0(key, "_roster")) %>%
     mutate(key = paste0("http://vcuathletics.com/sports/mbkb/archives/", key))
-
-# Web address for 2010 - 2016 seasons 
-start.year <- 2010:2015
-end.year <- start.year + 1
-
-rostersb <- data_frame(start.year, end.year)
-
-rostersb <- rostersb %>%
-    mutate(start.year = as.character(start.year)) %>%
-    mutate(end.year = as.character(end.year)) %>%
-    mutate(key = substr(end.year, 3, 4)) %>%
-    mutate(key = paste0("-", key)) %>%
-    mutate(key = paste0(start.year, key)) %>%
-    mutate(key = paste0(key, "/roster")) %>%
-    mutate(key = paste0("http://vcuathletics.com/sports/mbkb/", key))
 
 # Pulls a single year's roster from the VCU Athletic's website
 rosterScraper <- function (link) {
@@ -85,17 +69,76 @@ players <- tbl_df(players)
 players <- players %>%
     filter(!grepl("\n", player))
 
+# Web addresses for 2010 - 2016 seasons 
+start.year <- 2010:2015
+end.year <- start.year + 1
+
+rostersb <- data_frame(start.year, end.year)
+
+rostersb <- rostersb %>%
+    mutate(start.year = as.character(start.year)) %>%
+    mutate(end.year = as.character(end.year)) %>%
+    mutate(key = substr(end.year, 3, 4)) %>%
+    mutate(key = paste0("-", key)) %>%
+    mutate(key = paste0(start.year, key)) %>%
+    mutate(key = paste0(key, "/roster")) %>%
+    mutate(key = paste0("http://vcuathletics.com/sports/mbkb/", key))
+
+# Pulls a single year's roster from the VCU Athletic's website
+rosterScraperb <- function (link) {
+    temp <- read_html(as.character(link))
+    
+    link <- as.character(link)
+    
+    jersey <- temp %>% 
+        html_nodes(".number") %>%
+        html_text() 
+    
+    player <- temp %>% 
+        html_nodes(".name") %>%
+        html_text() 
+    
+    class <- temp %>% 
+        html_nodes("tbody td:nth-child(5)") %>%
+        html_text()  
+    
+    height <- temp %>% 
+        html_nodes("tbody td:nth-child(6)") %>%
+        html_text()      
+    
+    weight <- temp %>% 
+        html_nodes("tbody td:nth-child(7)") %>%
+        html_text()  
+    
+    boom <- data_frame(link, jersey, player, class, height, weight)
+    
+    return(boom)
+}
+
+# TODO(awunderground): scrape positions and impute them for the older players based
+# on height, weight, and stats
+
+playersb <- rbind(rosterScraperb(rostersb[1, 3]), 
+rosterScraperb(rostersb[2, 3]),
+rosterScraperb(rostersb[3, 3]),
+rosterScraperb(rostersb[4, 3]),
+rosterScraperb(rostersb[5, 3]),
+rosterScraperb(rostersb[6, 3]))
+
+boom <- bind_rows(players, playersb)
 
 
 
 
 
-rbind(players, vcu1979)
-vcu1979 <- read_html("http://vcuathletics.com/sports/mbkb/archives/197879_roster")
 
-roster1979 <- vcu1979 %>% 
-    html_nodes("td:nth-child(2) , tr+ tr td:nth-child(2) div") %>%
-    html_text() 
+
+
+
+
+
+
+
 
 
 # Historical Roster
