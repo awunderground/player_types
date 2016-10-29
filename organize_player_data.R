@@ -21,7 +21,7 @@ rosters <- rosters %>%
     mutate(key = paste0("http://vcuathletics.com/sports/mbkb/archives/", key))
 
 # Pulls a single year's roster from the VCU Athletic's website
-rosterScraper <- function (link) {
+rosterScraperA <- function (link) {
     temp <- read_html(as.character(link))
     
     link <- as.character(link)
@@ -55,21 +55,19 @@ rosterScraper <- function (link) {
 # No 1986-1987
 # No 1988-1989
 # No 1994-1995
-players <- NULL
+playersa <- NULL
 for (i in 1:32) {
     
-    temp <- rosterScraper(rosters[i, 3])
+    temp <- rosterScraperA(rosters[i, 3])
     
-    players <- rbind(players, temp)
+    playersa <- rbind(playersa, temp)
 }
 
-players <- tbl_df(players)
+playersa <- tbl_df(playersa)
 
-# Remove rows that contain "\n" which are the superfluous column headings and 
-# duplicate players 
-players <- players %>%
-    filter(!grepl("\n", player)) %>%
-    mutate(season = as.numeric(substr(link, 46, 49)) + 1)
+playersa <- playersa %>% 
+    mutate(season = as.numeric(substr(link, 46, 49)) + 1) %>%
+    filter(season != 1994)
 
 # Web addresses for 2010 - 2016 seasons 
 start.year <- 2010:2015
@@ -87,7 +85,7 @@ rostersb <- rostersb %>%
     mutate(key = paste0("http://vcuathletics.com/sports/mbkb/", key))
 
 # Pulls a single year's roster from the VCU Athletic's website
-rosterScraperb <- function (link) {
+rosterScraperB <- function (link) {
     temp <- read_html(as.character(link))
     
     link <- as.character(link)
@@ -120,28 +118,72 @@ rosterScraperb <- function (link) {
 # TODO(awunderground): scrape positions and impute them for the older players based
 # on height, weight, and stats
 
-playersb <- rbind(rosterScraperb(rostersb[1, 3]), 
-rosterScraperb(rostersb[2, 3]),
-rosterScraperb(rostersb[3, 3]),
-rosterScraperb(rostersb[4, 3]),
-rosterScraperb(rostersb[5, 3]),
-rosterScraperb(rostersb[6, 3]))
+playersb <- rbind(rosterScraperB(rostersb[1, 3]), 
+rosterScraperB(rostersb[2, 3]),
+rosterScraperB(rostersb[3, 3]),
+rosterScraperB(rostersb[4, 3]),
+rosterScraperB(rostersb[5, 3]),
+rosterScraperB(rostersb[6, 3]))
 
 playersb <- playersb %>%
-    mutate(season = as.numeric(substr(link, 37, 40)) + 1)
+    mutate(season = as.numeric(substr(link, 37, 40)) + 1) %>%
+    mutate_all(funs(gsub), pattern = "\t", replacement = "") %>%
+    mutate_all(funs(gsub), pattern = "\n", replacement = "") %>%
+    mutate_all(funs(str_trim))
 
-players <- bind_rows(players, playersb)
+# Fix 1994 
+rosterScraper94 <- function (link) {
+    temp <- read_html(as.character(link))
+    
+    link <- as.character(link)
+    
+    jersey <- temp %>% 
+        html_nodes("td td:nth-child(1) , tr+ tr td:nth-child(1) div") %>%
+        html_text() 
+    
+    player <- temp %>% 
+        html_nodes("td:nth-child(3) , tr+ tr td:nth-child(3) div") %>%
+        html_text() 
+    
+    class <- temp %>% 
+        html_nodes("td:nth-child(4) , tr+ tr td:nth-child(4) div") %>%
+        html_text()  
+    
+    height <- temp %>% 
+        html_nodes("td:nth-child(5) , tr+ tr td:nth-child(5) div") %>%
+        html_text()      
+    
+    weight <- temp %>% 
+        html_nodes("td:nth-child(6) , tr+ tr td:nth-child(6) div") %>%
+        html_text()  
+    
+    boom <- data_frame(link, jersey, player, class, height, weight)
+    
+    return(boom)
+}
 
-# Clean up the players data frame
+vcu1994 <- rosterScraper94(rosters[16, 3])
 
+vcu1994 <- vcu1994 %>% 
+    mutate(season = as.numeric(substr(link, 46, 49)) + 1)
+
+players <- bind_rows(playersa, playersb, vcu1994)
+
+##
+## Clean up the players data frame
+##
+
+# Remove rows that contain "\n" which are the superfluous column headings and 
+# duplicate players 
 boom <- players %>%
+    filter(!grepl("\n", player)) %>%
     mutate_all(str_trim) %>%
     mutate(jersey = as.numeric(jersey))
 
-
+# 1994
 
 # create redshirt dummy
-
+# 1989 Joey Rodriguez
 
 
 
