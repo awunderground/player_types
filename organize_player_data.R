@@ -6,12 +6,12 @@ library(tidyverse)
 
 # Objective 1: longitudinal roster record for VCU 1978-1979 to present 
 
-start.year <- 1978:2014
+start.year <- 1978:2009
 end.year <- start.year + 1
 
 rosters <- data_frame(start.year, end.year)
 
-# 197879 - 200910 Rosters
+# Web addresses for 197879 - 200910 Rosters
 rosters <- rosters %>%
     mutate(start.year = as.character(start.year)) %>%
     mutate(end.year = as.character(end.year)) %>%
@@ -20,27 +20,20 @@ rosters <- rosters %>%
     mutate(key = paste0(key, "_roster")) %>%
     mutate(key = paste0("http://vcuathletics.com/sports/mbkb/archives/", key))
 
+# Web address for 2010 - 2016 seasons 
+start.year <- 2010:2015
+end.year <- start.year + 1
 
+rostersb <- data_frame(start.year, end.year)
 
-
-
-rosters.diff <- rosters %>%
-    filter(end.year > 2010) %>%
+rostersb <- rostersb %>%
+    mutate(start.year = as.character(start.year)) %>%
+    mutate(end.year = as.character(end.year)) %>%
+    mutate(key = substr(end.year, 3, 4)) %>%
+    mutate(key = paste0("-", key)) %>%
     mutate(key = paste0(start.year, key)) %>%
-    mutate(key = paste0(key, "_roster")) %>%
-    mutate(key = paste0("http://vcuathletics.com/sports/mbkb/archives/", key))
-
-
-
-http://vcuathletics.com/sports/mbkb/2010-11/roster
-http://vcuathletics.com/sports/mbkb/2011-12/roster
-http://vcuathletics.com/sports/mbkb/2012-13/roster
-http://vcuathletics.com/sports/mbkb/2013-14/roster
-http://vcuathletics.com/sports/mbkb/2014-15/roster
-
-
-
-
+    mutate(key = paste0(key, "/roster")) %>%
+    mutate(key = paste0("http://vcuathletics.com/sports/mbkb/", key))
 
 # Pulls a single year's roster from the VCU Athletic's website
 rosterScraper <- function (link) {
@@ -85,15 +78,12 @@ for (i in 1:32) {
     players <- rbind(players, temp)
 }
 
+players <- tbl_df(players)
 
-
-
-
-
-
-
-
-
+# Remove rows that contain "\n" which are the superfluous column headings and 
+# duplicate players 
+players <- players %>%
+    filter(!grepl("\n", player))
 
 
 
