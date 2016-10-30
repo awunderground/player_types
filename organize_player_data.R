@@ -42,6 +42,14 @@ rosterScraperA <- function (link) {
         html_nodes("td:nth-child(4) , tr+ tr td:nth-child(4) div") %>%
         html_text()      
     
+    if (link == "http://vcuathletics.com/sports/mbkb/archives/199293_roster") {
+        short.vector <- temp %>% 
+            html_nodes("tr+ tr td:nth-child(4)") %>%
+            html_text()  
+        
+        height <- c(NA, NA, short.vector)
+    }
+    
     weight <- temp %>% 
         html_nodes("td:nth-child(5) , tr+ tr td:nth-child(5) div") %>%
         html_text()  
@@ -126,10 +134,10 @@ rosterScraperB(rostersb[5, 3]),
 rosterScraperB(rostersb[6, 3]))
 
 playersb <- playersb %>%
-    mutate(season = as.numeric(substr(link, 37, 40)) + 1) %>%
     mutate_all(funs(gsub), pattern = "\t", replacement = "") %>%
     mutate_all(funs(gsub), pattern = "\n", replacement = "") %>%
-    mutate_all(funs(str_trim))
+    mutate_all(funs(str_trim)) %>%
+    mutate(season = as.numeric(substr(link, 37, 40)) + 1) 
 
 # Fix 1994 
 rosterScraper94 <- function (link) {
@@ -188,13 +196,16 @@ boom <- players %>%
     mutate(class.c = ifelse(grepl("sr", class), "Senior", class.c)) %>%
     mutate(class.c = ifelse(grepl("Sr", class), "Senior", class.c)) %>%
     mutate(class.c = ifelse(grepl("Senior", class), "Senior", class.c)) %>%
-    filter(!(player == "Joey Rodriguez" & season < 2008))
+    filter(!(player == "Joey Rodriguez" & season < 2008)) %>%
+    mutate(feet = as.numeric(substr(height, 1, 1))) %>%
+    mutate(inches = as.numeric(substr(height, 3, 4))) %>%
+    mutate(height.inches = feet * 12 + inches)
 
-write.csv(players, "players.csv")
 
 
 
-# 1989 Joey Rodriguez
+
+# TODO(awunderground): 1990 and 1991 jersey numbers
 
 
 
