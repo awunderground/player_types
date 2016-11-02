@@ -30,9 +30,29 @@ rosterScraperA <- function (link) {
         html_nodes("td:nth-child(1) , tr+ tr td:nth-child(1) div") %>%
         html_text() 
     
+    if (link == "http://vcuathletics.com/sports/mbkb/archives/198182_roster" |
+        link == "http://vcuathletics.com/sports/mbkb/archives/198384_roster" |
+        link == "http://vcuathletics.com/sports/mbkb/archives/199091_roster" |
+        link == "http://vcuathletics.com/sports/mbkb/archives/199192_roster" |
+        link == "http://vcuathletics.com/sports/mbkb/archives/199596_roster") {
+        short.vector <- temp %>% 
+            html_nodes("td:nth-child(1) , tr+ tr td:nth-child(1) div") %>%
+            html_text()  
+        
+        jersey <- c(short.vector[1], NA, short.vector[2:length(short.vector)])
+    }
+    
     player <- temp %>% 
         html_nodes("td:nth-child(2) , tr+ tr td:nth-child(2) div") %>%
         html_text() 
+   
+    if (link == "http://vcuathletics.com/sports/mbkb/archives/198182_roster") {
+        short.vector <- temp %>% 
+            html_nodes("td:nth-child(2) , tr+ tr td:nth-child(2) div") %>%
+            html_text()  
+        
+        player <- c(short.vector[1], NA, short.vector[2:length(short.vector)])
+    }
     
     class <- temp %>% 
         html_nodes("td:nth-child(3) , tr+ tr td:nth-child(3) div") %>%
@@ -60,11 +80,11 @@ rosterScraperA <- function (link) {
 }
 
 # Loop through __ and __ and pull name, 
-# No 1986-1987
-# No 1988-1989
-# No 1994-1995
+# No 1986-1987 9
+# No 1988-1989 11
+# No 1994-1995 17
 playersa <- NULL
-for (i in 1:32) {
+for (i in c(1:8, 10, 18:32)) {
     
     temp <- rosterScraperA(rosters[i, 3])
     
