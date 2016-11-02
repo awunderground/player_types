@@ -2,9 +2,7 @@ library(rvest)
 library(stringr)
 library(tidyverse)
 
-
 # Rosters
-
 
 # Web addresses for 197879 - 200910 Rosters
 start.year <- 1978:2009
@@ -84,7 +82,7 @@ rosterScraperA <- function (link) {
 # No 1988-1989 11
 # No 1994-1995 17
 playersa <- NULL
-for (i in c(1:8, 10, 18:32)) {
+for (i in c(1:8, 10, 12:16, 18:32)) {
     
     temp <- rosterScraperA(rosters[i, 3])
     
@@ -203,7 +201,7 @@ players <- bind_rows(playersa, playersb, vcu1994)
 
 # Remove rows that contain "\n" which are the superfluous column headings and 
 # duplicate players 
-boom <- players %>%
+players <- players %>%
     filter(!grepl("\n", player)) %>%
     mutate_all(str_trim) %>%
     mutate(jersey = as.numeric(jersey)) %>%
@@ -221,64 +219,13 @@ boom <- players %>%
     mutate(inches = as.numeric(substr(height, 3, 4))) %>%
     mutate(height.inches = feet * 12 + inches)
 
+longitudinal.roster <- players %>%
+    mutate(class = class.c) %>%
+    select(season, jersey, player, class, height, height.inches, weight, redshirt)
 
+write.csv(longitudinal.roster, "data/longitudinal_roster.csv", row.names = FALSE)
 
+# Add position and then impute it for other players
+# impute it again after adding statistics
+# fix players a error
 
-
-# TODO(awunderground): 1990 and 1991 jersey numbers
-
-
-
-
-
-
-
-
-
-# Historical Roster
-
-# year | player name 1 | player name 2 (if hyphenated the hyphenate!) 
-
-
-vcu2016 <- read_html("http://www.sports-reference.com/cbb/schools/virginia-commonwealth/2016.html#all_roster")
-
-roster2016 <- vcu2016 %>% 
-    html_nodes("#roster tbody th") %>%
-    html_text() 
-
-
-
-
-
-
-
-
-http://www.sports-reference.com/cbb/players/jordan-burgess-1/gamelog/2014/
-
-moaliecox14 <- read_html("http://www.sports-reference.com/cbb/players/mo-alie-cox-1/gamelog/2014/")
-moaliecox15 <- read_html("http://www.sports-reference.com/cbb/players/mo-alie-cox-1/gamelog/2015/")
-moaliecox16 <- read_html("http://www.sports-reference.com/cbb/players/mo-alie-cox-1/gamelog/2016/")
-
-
-
-
-
-
-date <- moaliecox16 %>% 
-    html_nodes("tbody .right+ .left") %>%
-    html_text() 
-
-points <- moaliecox16 %>% 
-    html_nodes("tbody .right:nth-child(30)") %>%
-    html_text() 
-
-moaliecox <- data_frame(date, points) 
-    
-
-    
-    
-    
-    
-    
-    
-# Rselenium
