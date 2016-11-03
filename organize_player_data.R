@@ -213,7 +213,7 @@ players <- bind_rows(playersa, playersb, vcu1994)
 
 # Remove rows that contain "\n" which are the superfluous column headings and 
 # duplicate players 
-boom <- players %>%
+players <- players %>%
     filter(!grepl("\n", player)) %>%
     mutate_all(str_trim) %>%
     mutate(jersey = as.numeric(jersey)) %>%
@@ -230,21 +230,25 @@ boom <- players %>%
     mutate(feet = as.numeric(substr(height, 1, 1))) %>%
     mutate(inches = as.numeric(substr(height, 3, 4))) %>%
     mutate(height.inches = feet * 12 + inches) %>%
-    mutate(hometown = gsub("\n", " ", hometown)) %>%
+    mutate(hometown = gsub("\n", " ", hometown))
+
+players <- players %>%
     separate(hometown, c("town", "prior.school"), "/") %>%
     mutate(town = trimws(town)) %>%
     mutate(prior.school = trimws(prior.school)) %>%
+    mutate(town = ifelse(town == "Elizabeth N.J.", "Elizabeth, N.J.", town)) %>%
+    mutate(town = ifelse(town == "Ft. Walton Beach Fla.", "Ft. Walton Beach, Fla.", town)) %>%
+    mutate(town = ifelse(town == "Fr. Walton Beach Fla.", "Ft. Walton Beach, Fla.", town)) %>%
+    mutate(town = ifelse(town == "Albany Ga.", "Albany, Ga.", town)) %>%
+    mutate(town = ifelse(town == "Columbia S.C.", "Columbia, S.C.", town)) %>%
+    mutate(town = ifelse(town == "Winston-Salem", "Winston-Salem, N.C.", town)) %>%
     separate(town, c("city", "state"), ",") %>%
     mutate(city = trimws(city)) %>%
     mutate(state = trimws(state))
 
-# clean up 8 erroneous rows
-
-
-
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
-    select(season, jersey, player, class, height, height.inches, weight, redshirt)
+    select(season, jersey, player, class, height, height.inches, weight, redshirt, city, state, prior.school)
 
 write.csv(longitudinal.roster, "data/longitudinal_roster.csv", row.names = FALSE)
 
