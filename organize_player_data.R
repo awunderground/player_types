@@ -72,7 +72,11 @@ rosterScraperA <- function (link) {
         html_nodes("td:nth-child(5) , tr+ tr td:nth-child(5) div") %>%
         html_text()  
     
-    boom <- cbind(link, jersey, player, class, height, weight)
+    hometown <- temp %>% 
+        html_nodes("td:nth-child(6) , tr+ tr td:nth-child(6) div") %>%
+        html_text()  
+    
+    boom <- cbind(link, jersey, player, class, height, weight, hometown)
     
     return(boom)
 }
@@ -136,7 +140,11 @@ rosterScraperB <- function (link) {
         html_nodes("tbody td:nth-child(7)") %>%
         html_text()  
     
-    boom <- data_frame(link, jersey, player, class, height, weight)
+    hometown <- temp %>% 
+        html_nodes("tbody td:nth-child(8)") %>%
+        html_text()
+    
+    boom <- data_frame(link, jersey, player, class, height, weight, hometown)
     
     return(boom)
 }
@@ -183,7 +191,11 @@ rosterScraper94 <- function (link) {
         html_nodes("td:nth-child(6) , tr+ tr td:nth-child(6) div") %>%
         html_text()  
     
-    boom <- data_frame(link, jersey, player, class, height, weight)
+    hometown <- temp %>% 
+        html_nodes("td:nth-child(7) , tr+ tr td:nth-child(7) div") %>%
+        html_text() 
+    
+    boom <- data_frame(link, jersey, player, class, height, weight, hometown)
     
     return(boom)
 }
@@ -201,7 +213,7 @@ players <- bind_rows(playersa, playersb, vcu1994)
 
 # Remove rows that contain "\n" which are the superfluous column headings and 
 # duplicate players 
-players <- players %>%
+boom <- players %>%
     filter(!grepl("\n", player)) %>%
     mutate_all(str_trim) %>%
     mutate(jersey = as.numeric(jersey)) %>%
@@ -217,7 +229,15 @@ players <- players %>%
     filter(!(player == "Joey Rodriguez" & season < 2008)) %>%
     mutate(feet = as.numeric(substr(height, 1, 1))) %>%
     mutate(inches = as.numeric(substr(height, 3, 4))) %>%
-    mutate(height.inches = feet * 12 + inches)
+    mutate(height.inches = feet * 12 + inches) %>%
+    mutate(hometown = gsub("\n", " ", hometown))
+
+
+
+
+strsplit(players$hometown, "/")
+
+
 
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
@@ -228,4 +248,6 @@ write.csv(longitudinal.roster, "data/longitudinal_roster.csv", row.names = FALSE
 # Add position and then impute it for other players
 # impute it again after adding statistics
 # fix players a error
+
+# Add hometown
 
