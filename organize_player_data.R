@@ -230,12 +230,18 @@ boom <- players %>%
     mutate(feet = as.numeric(substr(height, 1, 1))) %>%
     mutate(inches = as.numeric(substr(height, 3, 4))) %>%
     mutate(height.inches = feet * 12 + inches) %>%
-    mutate(hometown = gsub("\n", " ", hometown))
+    mutate(hometown = gsub("\n", " ", hometown)) %>%
+    separate(hometown, c("town", "prior.school"), "/")
+
+
+separate(boom, c("town", "prior.school"), "/")
+
+# split town to create state
+# split school on () to include transfers
+    # unit test based on class
 
 
 
-
-strsplit(players$hometown, "/")
 
 
 
