@@ -160,6 +160,28 @@ seasons <- lapply(seasons, namer)
 
 
 
+season1972 <- namer(season1972)
+season1973 <- namer(season1973)
+
+season1972[, "name"]
+season1973[, "name"]
+
+temp <- if (sum(grepl("name", names(season1972))) == 0) {
+    
+    rep(NA, nrow(1972))
+    
+} else {
+    
+    season1972[, "name"]
+    
+}
+
+
+
+
+
+# TODO(awunderground): create long df with links, names, and games played. Loop
+# through dataframes in list and merge different stats?
 
 # player - good 
 # games.played - good 

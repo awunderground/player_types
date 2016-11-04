@@ -8,7 +8,7 @@ library(tidyverse)
 # Task 1 get all names
 
 # Web addresses for 197879 - 200910 Rosters
-start.year <- 1971:2009
+start.year <- 1971:2008
 end.year <- start.year + 1
 
 stats <- data_frame(start.year, end.year)
@@ -30,25 +30,107 @@ statScraperA <- function (link) {
         html_nodes("td:nth-child(1)") %>%
         html_text() 
     
-    boom <- cbind(link, player)
-
+    games.played <- temp %>% 
+        html_nodes("td:nth-child(2)") %>%
+        html_text() 
+    
+    field.goals <- temp %>% 
+        html_nodes("td:nth-child(3)") %>%
+        html_text() 
+    
+    free.throws <- temp %>% 
+        html_nodes("td:nth-child(5)") %>%
+        html_text() 
+        
+    rebounds <- temp %>% 
+        html_nodes("td:nth-child(7)") %>%
+        html_text() 
+    
+    fouls <- temp %>% 
+        html_nodes("td:nth-child(9)") %>%
+        html_text()       
+    
+    assists <- temp %>% 
+        html_nodes("td:nth-child(10)") %>%
+        html_text() 
+    
+    boom <- cbind(link, player, games.played, field.goals, free.throws, rebounds, 
+                  fouls, assists)
+    
     return(boom)
 }
 
 players <- NULL
-for (i in 1:39) {
+for (i in c(1, 3,4)) {
     
     temp <- statScraperA(stats[i, 3])
     
     players <- rbind(players, temp)
 }
 
+statScraperB <- function (link) {
+    temp <- read_html(as.character(link))
+    
+    link <- as.character(link)
+    
+    player <- temp %>% 
+        html_nodes("td:nth-child(1)") %>%
+        html_text() 
+    
+    games.played <- temp %>% 
+        html_nodes("td:nth-child(2)") %>%
+        html_text() 
+    
+    vector3 <- temp %>% 
+        html_nodes("td:nth-child(3)") %>%
+        html_text() 
+    
+    label <- rep(vector3[1], length(vector3))
+    
+    boom <- cbind(link, player, games.played, vector3, label)
+    
+    return(boom)
+}
+
+players <- NULL
+for (i in 1:nrow(stats)) {
+    
+    temp <- statScraperB(stats[i, 3])
+    
+    players <- rbind(players, temp)
+}
+
+players %>%
+    mutate(field.goals = ifelse("FG", grepl(vector3), ))
+
+# scrape to list
+
+
+
+
+
+
+# 74-75 3 is fgs 
+# 72-73, 76-09 3 is minutes
+
+
+
+field.goals <- temp %>% 
+    html_nodes("td:nth-child(3)") %>%
+    html_text() 
+
+
+
+
+
+
+
 
 
 temp <- read_html("http://vcuathletics.com/sports/mbkb/archives/197172_Stats")
 
 boom72 <- temp %>% 
-    html_nodes("td:nth-child(1)") %>%
+    html_nodes("td:nth-child(2)") %>%
     html_text() 
 
 
