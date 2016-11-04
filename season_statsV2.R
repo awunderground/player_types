@@ -61,8 +61,66 @@ statScraperA <- function (link) {
         html_nodes("td:nth-child(10)") %>%
         html_text()
 
+    vector11 <- temp %>% 
+        html_nodes("td:nth-child(11)") %>%
+        html_text()
+    
+    if (length(vector11) == 0) {
+        vector11 <- rep(NA, length(vector10))
+    }
+
+    vector12 <- temp %>% 
+        html_nodes("td:nth-child(12)") %>%
+        html_text()
+    
+    if (length(vector12) == 0) {
+        vector12 <- rep(NA, length(vector11))
+    }
+    
+    vector13 <- temp %>% 
+        html_nodes("td:nth-child(13)") %>%
+        html_text()
+    
+    if (length(vector13) == 0) {
+        vector13 <- rep(NA, length(vector12))
+    }
+    
+    vector14 <- temp %>% 
+        html_nodes("td:nth-child(14)") %>%
+        html_text()
+    
+    if (length(vector14) == 0) {
+        vector14 <- rep(NA, length(vector13))
+    }
+    
+    vector15 <- temp %>% 
+        html_nodes("td:nth-child(15)") %>%
+        html_text()
+    
+    if (length(vector15) == 0) {
+        vector15 <- rep(NA, length(vector14))
+    }
+    
+    vector16 <- temp %>% 
+        html_nodes("td:nth-child(16)") %>%
+        html_text()
+    
+    if (length(vector16) == 0) {
+        vector16 <- rep(NA, length(vector15))
+    }
+    
+    vector17 <- temp %>% 
+        html_nodes("td:nth-child(17)") %>%
+        html_text()
+    
+    if (length(vector17) == 0) {
+        vector17 <- rep(NA, length(vector16))
+    }
+    
     boom <- data_frame(link, player, games.played, vector3, vector4, vector5, 
-                       vector6, vector7, vector8, vector9, vector10)
+                       vector6, vector7, vector8, vector9, vector10, vector11,
+                       vector12, vector13, vector14, vector15, vector16, 
+                       vector17)
     
     return(boom)
 }
@@ -76,8 +134,23 @@ for (i in 1:nrow(stats)) {
 }
 
 
+
+
+
+
+
+
 td:nth-child(10)
 
 td:nth-child(17)
 
+
+
+short <- read_html("http://vcuathletics.com/sports/mbkb/archives/197475_Stats")
+
+short.out <- short %>% 
+    html_nodes("td:nth-child(11)") %>%
+    html_text()
+
+ifelse(length(short.out) < 0, "Yes", "No")
 
