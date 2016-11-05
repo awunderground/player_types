@@ -28,8 +28,7 @@ statScraperA <- function (link) {
     games.played <- temp %>% 
         html_nodes("td:nth-child(2)") %>%
         html_text()
-    
-    
+
     boom <- data_frame(link, player, games.played)
     
     return(boom)
@@ -189,7 +188,9 @@ namer <- function(df) {
     df[1, ] <- tolower(df[1, ])
     df[1, ] <- gsub("\\.", "", df[1, ])
     df[1, ] <- gsub("-", ".", df[1, ])
-
+    df[1, ] <- gsub("min", "minutes", df[1, ])
+    df[1, ] <- gsub("minutes.avg", "minutes", df[1, ])
+    
     names(df) <- df[1, ]
     df <- df[2:nrow(df), ]
     
@@ -198,83 +199,25 @@ namer <- function(df) {
 
 seasons <- lapply(seasons, namer)
 
-field.goals <- data_frame()
-for (i in 1:nrow(stats)) {
-    
-    if (sum(grepl("fg.fga", names(seasons[[i]]))) == 0) {
-        
-        temp <- rep(NA, nrow(seasons[[i]]))
-        
-    } else {
-        
-        temp <- seasons[[i]][, "fg.fga"]
-        
-    }
-    
-    field.goals <- rbind(field.goals, temp)
-    
-    rm(temp)
-}
-
-
-free.throws <- data_frame()
-for (i in 1:nrow(stats)) {
-    
-    if (sum(grepl("ft.fta", names(seasons[[i]]))) == 0) {
-        
-        temp <- rep(NA, nrow(seasons[[i]]))
-        
-    } else {
-        
-        temp <- seasons[[i]][, "ft.fta"]
-        
-    }
-    
-    free.throws <- rbind(free.throws, temp)
-    
-    rm(temp)
-}
-
 
 minutes <- data_frame()
-field.goals <- data_frame()
-
-free.throws <- data_frame()
-rebounds <- data_frame()
-fouls <- data_frame()
-assists <- data_frame()
-#turnovers <- data_frame()
-blocks <- data_frame()
-steals <- data_frame()
-points <- data_frame()
-
 for (i in 1:nrow(stats)) {
-    
-    if (sum(grepl("min", names(seasons[[i]]))) == 0) {
-        temp1 <- data_frame(min = rep(NA, nrow(seasons[[i]])))
+    if (sum(grepl("minutes", names(seasons[[i]]))) == 0) {
+        temp <- data_frame(minutes = rep(NA, nrow(seasons[[i]])))
     } else {
-        temp1 <- seasons[[i]][, "min"]
+        temp <- seasons[[i]][, "minutes"]
     }
-    
-    if (sum(grepl("fg.fga", names(seasons[[i]]))) == 0) {
-        temp2 <- data_frame(fg.fga = rep(NA, nrow(seasons[[i]])))
-    } else {
-        temp2 <- seasons[[i]][, "fg.fga"]
-    }
- 
-    minutes <- rbind(minutes, temp1)
-    field.goals <- rbind(field.goals, temp2)
+    minutes <- rbind(minutes, temp)
+}
 
-#    free.throws <- rbind(free.throws, temp4)
-#    rebounds <- rbind(rebounds, temp5)
-#    fouls <- rbind(fouls, temp6)
-#    assists <- rbind(assists, temp7)
-#    turnovers <- rbind(turnovers, temp8)
-#    blocks <- rbind(blocks, temp9)
-#    steals <- rbind(steals, temp10)
-#    points <- rbind(points, temp11)
-    
-    rm(temp1, temp2)
+field.goals <- data_frame()
+for (i in 1:nrow(stats)) {
+    if (sum(grepl("fg.fga", names(seasons[[i]]))) == 0) {
+        temp <- data_frame(fg.fga = rep(NA, nrow(seasons[[i]])))
+    } else {
+        temp <- seasons[[i]][, "fg.fga"]
+    }
+    field.goals <- rbind(field.goals, temp)
 }
 
 # Three pointers
@@ -296,13 +239,14 @@ for (i in 1:nrow(stats)) {
     } else {
         temp <- seasons[[i]][, "ft.fta"]
     }
-    free.throws < rbind(free.throws, temp)
+    free.throws <- rbind(free.throws, temp)
     rm(temp)
 }
 
 rebounds <- data_frame()
+condition <- c("off.def.tot", "reb")
 for (i in 1:nrow(stats)) {
-    if (sum(grepl("off.def.tot", names(seasons[[i]]))) == 0) {
+    if (sum(grepl(condition, names(seasons[[i]]))) == 0) {
         temp <- data_frame(off.def.tot = rep(NA, nrow(seasons[[i]])))
     } else {
         temp <- seasons[[i]][, "off.def.tot"]
@@ -333,7 +277,7 @@ for (i in 1:nrow(stats)) {
 
 turnovers <- data_frame()
 for (i in 1:nrow(stats)) {
-    if (sum(grepl("to", names(seasons[[i]]))) == 0) {
+    if (sum(grepl("to$", names(seasons[[i]]))) == 0) {
         temp <- data_frame(to = rep(NA, nrow(seasons[[i]])))
     } else {
         temp <- seasons[[i]][, "to"]
@@ -374,6 +318,11 @@ for (i in 1:nrow(stats)) {
 
 
 
+
+# TODO(awunderground): count NAs in each vector
+
+
+
 # checkR
 for (i in 1:38) {
 if (sum(grepl("off.def.tot", names(seasons[[i]]))) == 0) {
@@ -385,93 +334,8 @@ if (sum(grepl("off.def.tot", names(seasons[[i]]))) == 0) {
 }
 
 
+long <- bind_cols(key, minutes, field.goals, three.pointers, free.throws, 
+                  rebounds, fouls, assists, turnovers, blocks, steals, points)
 
 
-
-
-
-
- 
-
-
-
-
-
-
-hope <- if (sum(grepl("fg.fga", names(seasons[[1]]))) == 0) {
-    
-    rep(NA, nrow(seasons[[1]]))
-    
-} else {
-    
-    seasons[[1]][, "fg.fga"]
-    
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-temp1 <- seasons[[1]]
-temp2 <- seasons[[2]]
-
-for (i in 1:2) {
-    
-    print(seasons[[i]][, "fg.fga"])
-    
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-temp1 <- namer(season1972)
-season1973 <- namer(season1973)
-
-season1972[, "name"]
-season1973[, "name"]
-
-
-# TODO(awunderground): create long df with links, names, and games played. Loop
-# through dataframes in list and merge different stats?
-
-# player - good 
-# games.played - good 
-# minutes
-# field.goals
-# three.pointers
-# free.throws
-# rebounds
-# assists
-# turnovers
-# blocks
-# steals
-# points
-
-
-short <- read_html("http://vcuathletics.com/sports/mbkb/archives/197475_Stats")
-
-short.out <- short %>% 
-    html_nodes("td:nth-child(11)") %>%
-    html_text()
-
-ifelse(length(short.out) < 0, "Yes", "No")
 
