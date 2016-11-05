@@ -188,6 +188,7 @@ namer <- function(df) {
     df[1, ] <- tolower(df[1, ])
     df[1, ] <- gsub("\\.", "", df[1, ])
     df[1, ] <- gsub("-", ".", df[1, ])
+    df[1, ] <- gsub("to", "turnovers", df[1, ])
 
     names(df) <- df[1, ]
     df <- df[2:nrow(df), ]
@@ -216,14 +217,134 @@ for (i in 1:nrow(stats)) {
 }
 
 
+free.throws <- data_frame()
+for (i in 1:nrow(stats)) {
+    
+    if (sum(grepl("ft.fta", names(seasons[[i]]))) == 0) {
+        
+        temp <- rep(NA, nrow(seasons[[i]]))
+        
+    } else {
+        
+        temp <- seasons[[i]][, "ft.fta"]
+        
+    }
+    
+    free.throws <- rbind(free.throws, temp)
+    
+    rm(temp)
+}
 
 
+minutes <- data_frame()
+field.goals <- data_frame()
+three.pointers <- data_frame()
+free.throws <- data_frame()
+rebounds <- data_frame()
+fouls <- data_frame()
+assists <- data_frame()
+turnovers <- data_frame()
+blocks <- data_frame()
+steals <- data_frame()
+points <- data_frame()
 
+for (i in 1:nrow(stats)) {
+    
+    if (sum(grepl("min", names(seasons[[i]]))) == 0) {
+        temp1 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp1 <- seasons[[i]][, "min"]
+    }
+    
+    if (sum(grepl("fg.fga", names(seasons[[i]]))) == 0) {
+        temp2 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp2 <- seasons[[i]][, "fg.fga"]
+    }
+    
+    if (sum(grepl("3fg.att", names(seasons[[i]]))) == 0) {
+        temp3 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp3 <- seasons[[i]][, "3fg.att"]
+    }
+    
+    if (sum(grepl("ft.fta", names(seasons[[i]]))) == 0) {
+        temp4 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp4 <- seasons[[i]][, "ft.fta"]
+    }
+    
+    if (sum(grepl("off.def.tot", names(seasons[[i]]))) == 0) {
+        temp5 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp5 <- seasons[[i]][, "off.def.tot"]
+    }  
+    
+    if (sum(grepl("pf.fo", names(seasons[[i]]))) == 0) {
+        temp6 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp6 <- seasons[[i]][, "pf.fo"]
+    } 
+    
+    if (sum(grepl("ast", names(seasons[[i]]))) == 0) {
+        temp7 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp7 <- seasons[[i]][, "ast"]
+    } 
+    
+    if (sum(grepl("turnovers", names(seasons[[i]]))) == 0) {
+        temp8 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp8 <- seasons[[i]][, "turnovers"]
+    } 
 
+    if (sum(grepl("blk", names(seasons[[i]]))) == 0) {
+        temp9 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp9 <- seasons[[i]][, "blk"]
+    } 
+    
+    if (sum(grepl("stl", names(seasons[[i]]))) == 0) {
+        temp10 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp10 <- seasons[[i]][, "stl"]
+    } 
+    
+    if (sum(grepl("pts.avg", names(seasons[[i]]))) == 0) {
+        temp11 <- rep(NA, nrow(seasons[[i]]))
+    } else {
+        temp11 <- seasons[[i]][, "pts.avg"]
+    } 
 
+    minutes <- rbind(field.goals, temp1)
+    field.goals <- rbind(field.goals, temp2)
+    three.pointers <- data_frame(three.pointers, temp3)
+    free.throws <- rbind(free.throws, temp4)
+    rebounds <- rbind(rebounds, temp5)
+    fouls <- rbind(fouls, temp6)
+    assists <- rbind(assists, temp7)
+    turnovers <- rbind(turnovers, temp8)
+    blocks <- rbind(blocks, temp9)
+    steals <- rbind(steals, temp10)
+    points <- rbind(points, temp11)
+    
+    rm(temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11)
+}
 
-
-
+# min
+# fg.fga
+# pct
+# 3fg.att
+# pct
+# ft.fta
+# pct
+# off.def.tot
+# pf.fo
+# ast
+# to
+# blk
+# stl
+# pts.avg
 
 
 
