@@ -29,6 +29,37 @@ statScraperA <- function (link) {
         html_nodes("td:nth-child(2)") %>%
         html_text()
     
+    
+    boom <- data_frame(link, player, games.played)
+    
+    return(boom)
+}
+
+# Scrape longitudinal record of players and games played. 
+key <- NULL
+for (i in 1:nrow(stats)) {
+    
+    temp <- statScraperA(stats[i, 3])
+    
+    key <- rbind(key, temp)
+}
+
+key <- key %>%
+    filter(player != "Name" & player != "\nName\n")
+
+statScraperB <- function (link) {
+    temp <- read_html(as.character(link))
+    
+    link <- as.character(link)
+    
+    player <- temp %>% 
+        html_nodes("td:nth-child(1)") %>%
+        html_text() 
+    
+    games.played <- temp %>% 
+        html_nodes("td:nth-child(2)") %>%
+        html_text()
+    
     vector3 <- temp %>% 
         html_nodes("td:nth-child(3)") %>%
         html_text()
@@ -127,7 +158,7 @@ statScraperA <- function (link) {
 
 for (i in 1:nrow(stats)) {
     
-    temp <- statScraperA(stats[i, 3])
+    temp <- statScraperB(stats[i, 3])
     
     assign(paste0("season", i + 1971), temp)
     
@@ -141,6 +172,15 @@ seasons <- list(season1972, season1973, season1974, season1975, season1976,
                 season1997, season1998, season1999, season2000, season2001,
                 season2002, season2003, season2004, season2005, season2006,
                 season2007, season2008, season2009)
+
+rm(season1972, season1973, season1974, season1975, season1976, 
+   season1977, season1978, season1979, season1980, season1981,
+   season1982, season1983, season1984, season1985, season1986,
+   season1987, season1988, season1989, season1990, season1991,
+   season1992, season1993, season1994, season1995, season1996,
+   season1997, season1998, season1999, season2000, season2001,
+   season2002, season2003, season2004, season2005, season2006,
+   season2007, season2008, season2009)
 
 namer <- function(df) {
 
@@ -157,27 +197,94 @@ namer <- function(df) {
 
 seasons <- lapply(seasons, namer)
 
-
-
-
-season1972 <- namer(season1972)
-season1973 <- namer(season1973)
-
-season1972[, "name"]
-season1973[, "name"]
-
-temp <- if (sum(grepl("name", names(season1972))) == 0) {
+field.goals <- data_frame()
+for (i in 1:nrow(stats)) {
     
-    rep(NA, nrow(1972))
+    if (sum(grepl("fg.fga", names(seasons[[i]]))) == 0) {
+        
+        temp <- rep(NA, nrow(seasons[[i]]))
+        
+    } else {
+        
+        temp <- seasons[[i]][, "fg.fga"]
+        
+    }
+    
+    field.goals <- rbind(field.goals, temp)
+    
+    rm(temp)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+hope <- if (sum(grepl("fg.fga", names(seasons[[1]]))) == 0) {
+    
+    rep(NA, nrow(seasons[[1]]))
     
 } else {
     
-    season1972[, "name"]
+    seasons[[1]][, "fg.fga"]
     
 }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+temp1 <- seasons[[1]]
+temp2 <- seasons[[2]]
+
+for (i in 1:2) {
+    
+    print(seasons[[i]][, "fg.fga"])
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+temp1 <- namer(season1972)
+season1973 <- namer(season1973)
+
+season1972[, "name"]
+season1973[, "name"]
 
 
 # TODO(awunderground): create long df with links, names, and games played. Loop
@@ -195,8 +302,6 @@ temp <- if (sum(grepl("name", names(season1972))) == 0) {
 # blocks
 # steals
 # points
-
-
 
 
 short <- read_html("http://vcuathletics.com/sports/mbkb/archives/197475_Stats")
