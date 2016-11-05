@@ -191,6 +191,7 @@ namer <- function(df) {
     df[1, ] <- gsub("min", "minutes", df[1, ])
     df[1, ] <- gsub("minutes.avg", "minutes", df[1, ])
     df[1, ] <- gsub("off.def.tot", "reb", df[1, ])
+    df[1, ] <- gsub("3fg.att", "three.pointers", df[1, ])
     
     names(df) <- df[1, ]
     df <- df[2:nrow(df), ]
@@ -224,10 +225,10 @@ for (i in 1:nrow(stats)) {
 # Three pointers
 three.pointers <- data_frame()
 for (i in 1:nrow(stats)) {
-    if (sum(grepl("3fg.att", names(seasons[[i]]))) == 0) {
-        temp <- data_frame(`3fg.att` = rep(NA, nrow(seasons[[i]])))
+    if (sum(grepl("three.pointers", names(seasons[[i]]))) == 0) {
+        temp <- data_frame(three.pointers = rep(NA, nrow(seasons[[i]])))
     } else {
-        temp <- seasons[[i]][, "3fg.att"]
+        temp <- seasons[[i]][, "three.pointers"]
     }
     three.pointers <- rbind(three.pointers, temp)
     rm(temp)
