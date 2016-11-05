@@ -190,6 +190,7 @@ namer <- function(df) {
     df[1, ] <- gsub("-", ".", df[1, ])
     df[1, ] <- gsub("min", "minutes", df[1, ])
     df[1, ] <- gsub("minutes.avg", "minutes", df[1, ])
+    df[1, ] <- gsub("off.def.tot", "reb", df[1, ])
     
     names(df) <- df[1, ]
     df <- df[2:nrow(df), ]
@@ -244,12 +245,11 @@ for (i in 1:nrow(stats)) {
 }
 
 rebounds <- data_frame()
-condition <- c("off.def.tot", "reb")
 for (i in 1:nrow(stats)) {
-    if (sum(grepl(condition, names(seasons[[i]]))) == 0) {
-        temp <- data_frame(off.def.tot = rep(NA, nrow(seasons[[i]])))
-    } else {
-        temp <- seasons[[i]][, "off.def.tot"]
+    if (sum(grepl("reb", names(seasons[[i]]))) == 0) {
+        temp <- data_frame(reb = rep(NA, nrow(seasons[[i]])))
+    } else  {
+        temp <- seasons[[i]][, "reb"]
     } 
     rebounds <- rbind(rebounds, temp)
     rm(temp)
@@ -315,27 +315,7 @@ for (i in 1:nrow(stats)) {
     points <- rbind(points, temp)
 }
 
-
-
-
-
-# TODO(awunderground): count NAs in each vector
-
-
-
-# checkR
-for (i in 1:38) {
-if (sum(grepl("off.def.tot", names(seasons[[i]]))) == 0) {
-    temp <- data_frame(ft.fta = rep(NA, nrow(seasons[[i]])))
-} else {
-    temp <- seasons[[i]][, "ft.fta"]
-}
-    print(temp)
-}
-
-
 long <- bind_cols(key, minutes, field.goals, three.pointers, free.throws, 
                   rebounds, fouls, assists, turnovers, blocks, steals, points)
 
-
-
+write.csv(long, "data/longitudinal_player_stats.csv", row.names = FALSE)
