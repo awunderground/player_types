@@ -14,7 +14,7 @@ for (i in 1:length(key)) {
     
 }
 
-boom <- long %>%
+long <- long %>%
     select(-Rk, -FG., -X2P, -X2PA, -X2P., -X3P., -FT.) %>%
     rename(player = Player, 
            games.played = G, 
@@ -35,16 +35,8 @@ boom <- long %>%
            fouls = PF,
            points = PTS)
 
+long <- long %>%
+    separate(player, sep = "\\\\", into = c("player", "trash")) %>%
+    select(-trash)
 
-
-
-
-link	player	games.played minutes	fg.fga	three.pointers	ft.fta	reb	pf.fo	ast	to	blk	stl	pts.avg
-
-
-
-
-boom <- 
-
-
-
+write.csv(long, "data/recent_longitudinal_player_stats.csv", row.names = FALSE)
