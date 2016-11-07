@@ -1,12 +1,13 @@
-library(rvest)
 library(stringr)
 library(tidyverse)
 
-long <- read.csv("data/longitudinal_player_stats.csv", header = TRUE, stringsAsFactors = FALSE)
+old.seasons <- read.csv("data/longitudinal_player_stats.csv", header = TRUE, stringsAsFactors = FALSE)
+recent.seasons <- read.csv("data/recent_longitudinal_player_stats.csv", header = TRUE, stringsAsFactors = FALSE)
 
-long <- tbl_df(long)
+old.seasons <- tbl_df(old.seasons)
+recent.seasons <- tbl_df(recent.seasons)
 
-boom <- long %>%
+boom <- old.seasons %>%
     mutate_all(funs(gsub), pattern = "\n", replacement = "") %>%
     mutate_all(funs(trimws)) %>%
     mutate(season = substr(link, 50, 51)) %>%
@@ -24,4 +25,17 @@ boom <- long %>%
     separate(three.pointers, sep = "-", into = c("three.pointers", "three.point.attempts")) %>%
     mutate(three.pointers = as.numeric(three.pointers)) %>%
     mutate(three.point.attempts = as.numeric(three.point.attempts)) %>%
-    separate(ft.fta, sep = "-", into = c("free.throws", "free.throw.attempts")) 
+    separate(ft.fta, sep = "-", into = c("free.throws", "free.throw.attempts")) %>%
+    mutate(free.throws = as.numeric(free.throws)) %>%
+    mutate(free.throw.attempts = as.numeric(free.throw.attempts)) %>%
+    mutate(total.rebounds = ifelse(grepl("-", reb), NA, reb)) %>%
+    separate(reb, sep = "-", into = c("offensive.rebounds", "defensive.rebounds", "total.temp")) %>%
+    mutate(total.rebounds = ifelse(is.na(total.rebounds), total.temp, total.rebounds)) %>%
+    mutate(offensive.rebounds = ifelse(is.na(defensive.rebounds), NA, offensive.rebounds))
+
+zoom <- mutate(boom, zam = ifelse(total.rebounds == NA, total.temp, total.rebounds)) %>%
+    select(total.rebounds)
+
+
+
+
