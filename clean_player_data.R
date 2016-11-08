@@ -16,12 +16,11 @@ old.seasons <- old.seasons %>%
     mutate(season = as.numeric(season)) %>%
     mutate(season = ifelse(season > 17, season + 1900, season + 2000)) 
 
-
 # Clean up games played and minutes
 old.seasons <- old.seasons%>%
     separate(games.played, sep = "-", into = c("games.played", "games.started")) %>%
     mutate(games.played = as.numeric(games.played)) %>%
-    mutate(games.played = as.numeric(games.played)) %>%
+    mutate(games.started = as.numeric(games.started)) %>%
     separate(minutes, sep = "-", into = c("minutes", "average.minutes")) %>%
     mutate(minutes = as.numeric(minutes)) %>%
     mutate(average.minutes = as.numeric(average.minutes)) 
@@ -39,16 +38,33 @@ old.seasons <- old.seasons%>%
     mutate(free.throw.attempts = as.numeric(free.throw.attempts))
 
 # Clean up rebounds and fouls
-boom <- old.seasons %>%
+old.seasons <- old.seasons %>%
     mutate(total.rebounds = ifelse(grepl("-", reb), NA, reb)) %>%
     separate(reb, sep = "-", into = c("offensive.rebounds", "defensive.rebounds", "total.temp")) %>%
     mutate(total.rebounds = ifelse(is.na(total.rebounds), total.temp, total.rebounds)) %>%
     mutate(offensive.rebounds = ifelse(is.na(defensive.rebounds), NA, offensive.rebounds)) %>%
+    mutate(offensive.rebounds = as.numeric(offensive.rebounds)) %>%
+    mutate(defensive.rebounds = as.numeric(defensive.rebounds)) %>%
+    mutate(total.rebounds = as.numeric(defensive.rebounds)) %>%
     separate(pf.fo, sep = "-", into = c("fouls", "foul.outs")) %>%
     mutate(fouls = as.numeric(fouls)) %>%
     mutate(foul.outs = as.numeric(foul.outs))
     
 # Clean up assists, turnovers, blocks, and steals
+old.seasons <- old.seasons %>%
+    rename(assists = ast, turnovers = to, blocks = blk, steals = stl) %>%
+    mutate(assists = as.numeric(assists)) %>%
+    mutate(turnovers = as.numeric(turnovers)) %>%
+    mutate(blocks = as.numeric(blocks)) %>%
+    mutate(steals = as.numeric(steals))
+
+# Clean up points
+old.seasons <- old.seasons %>%
+    separate(pts.avg, sep = "-", into = c("points", "average.points")) %>%
+    mutate(points = as.numeric(points)) %>%
+    mutate(average.points = as.numeric(average.points))
+
+
 
 
 
