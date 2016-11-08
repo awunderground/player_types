@@ -45,10 +45,11 @@ old.seasons <- old.seasons %>%
     mutate(offensive.rebounds = ifelse(is.na(defensive.rebounds), NA, offensive.rebounds)) %>%
     mutate(offensive.rebounds = as.numeric(offensive.rebounds)) %>%
     mutate(defensive.rebounds = as.numeric(defensive.rebounds)) %>%
-    mutate(total.rebounds = as.numeric(defensive.rebounds)) %>%
+    mutate(total.rebounds = as.numeric(total.rebounds)) %>%
     separate(pf.fo, sep = "-", into = c("fouls", "foul.outs")) %>%
     mutate(fouls = as.numeric(fouls)) %>%
-    mutate(foul.outs = as.numeric(foul.outs))
+    mutate(foul.outs = as.numeric(foul.outs)) %>%
+    select(-total.temp)
     
 # Clean up assists, turnovers, blocks, and steals
 old.seasons <- old.seasons %>%
@@ -64,17 +65,19 @@ old.seasons <- old.seasons %>%
     mutate(points = as.numeric(points)) %>%
     mutate(average.points = as.numeric(average.points))
 
+# Bind older seasons and recent seasons
+long <- bind_rows(old.seasons, recent.seasons)
 
+##
+## Create Data Frames 
+##
 
+players <- long %>%
+    filter(player != "Totals" & player != "Opponents")
 
+seasons <- long %>%
+    filter(player == "Totals")
 
-
-
-
-
-zoom <- mutate(boom, zam = ifelse(total.rebounds == NA, total.temp, total.rebounds)) %>%
-    select(total.rebounds)
-
-
-
+opponents <- long %>%
+    filter(player == "Opponents")
 

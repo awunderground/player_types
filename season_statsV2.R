@@ -320,17 +320,3 @@ long <- bind_cols(key, minutes, field.goals, three.pointers, free.throws,
                   rebounds, fouls, assists, turnovers, blocks, steals, points)
 
 write.csv(long, "data/longitudinal_player_stats.csv", row.names = FALSE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
