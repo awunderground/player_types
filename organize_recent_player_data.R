@@ -10,6 +10,8 @@ for (i in 1:length(key)) {
     
     temp <- read.csv(key[i], header = TRUE, stringsAsFactors = FALSE)
     
+    temp <- mutate(temp, season = i + 2009)
+
     long <- bind_rows(long, temp)
     
 }
@@ -19,7 +21,7 @@ long <- long %>%
     rename(player = Player, 
            games.played = G, 
            minutes = MP, 
-           field.goal = FG, 
+           field.goals = FG, 
            field.goal.attempts = FGA,
            three.pointers = X3P,
            three.point.attempts = X3PA,
