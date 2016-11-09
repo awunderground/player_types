@@ -65,6 +65,13 @@ old.seasons <- old.seasons %>%
     mutate(points = as.numeric(points)) %>%
     mutate(average.points = as.numeric(average.points))
 
+# Clean names
+
+old.seasons <- old.seasons %>%
+    separate(player, sep = ", ", into = c("last.name", "first.name"))
+
+# mutate(player = gsub("\\.", "", player)) %>%
+
 # Bind older seasons and recent seasons
 long <- bind_rows(old.seasons, recent.seasons)
 
@@ -73,11 +80,30 @@ long <- bind_rows(old.seasons, recent.seasons)
 ##
 
 players <- long %>%
-    filter(player != "Totals" & player != "Opponents")
+    filter(last.name != "Totals" & last.name != "Opponents")
 
 seasons <- long %>%
-    filter(player == "Totals")
+    filter(last.name == "Totals")
 
 opponents <- long %>%
-    filter(player == "Opponents")
+    filter(last.name == "Opponents")
+
+# Merge roster by last name and season 
+
+roster <- read.csv("data/longitudinal_roster.csv", header = TRUE, stringsAsFactors = FALSE)
+
+boom <- left_join(players, roster, by = c("last.name", "season"))
+# This is close, but there are common names 
+
+boom %in% players
+players
+
+
+
+
+anti_join(players, roster, by = c("first.name", "last.name", "season"))
+
+
+
+
 
