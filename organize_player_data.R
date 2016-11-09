@@ -246,9 +246,12 @@ players <- players %>%
     mutate(city = trimws(city)) %>%
     mutate(state = trimws(state))
 
+players[291, 3] <- "Drew Johnson"
+
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
-    select(season, jersey, player, class, height, height.inches, weight, redshirt, city, state, prior.school)
+    select(season, jersey, player, class, height, height.inches, weight, redshirt, city, state, prior.school) %>%
+    separate(player, " ", into = c("first.name", "last.name"))
 
 write.csv(longitudinal.roster, "data/longitudinal_roster.csv", row.names = FALSE)
 
