@@ -92,17 +92,48 @@ opponents <- long %>%
 
 roster <- read.csv("data/longitudinal_roster.csv", header = TRUE, stringsAsFactors = FALSE)
 
-boom <- left_join(players, roster, by = c("last.name", "season"))
+players <- left_join(players, roster, by = c("last.name", "season"))
 # This is close, but there are common names 
 
-boom %in% players
-players
+# Drop cases with different first names
+errors <- players[!is.na(players$first.name.y) & !is.na(players$first.name.x), ]
+
+key <- (errors$first.name.x != errors$first.name.y)
+errors <- errors[key, ]
+
+
+# Remove Improperly Merged Data
+players <- players %>%
+    filter(!(last.name == "Shropshire" & first.name.x == "G." & first.name.y == "Bobby")) %>%
+    filter(!(last.name == "Shropshire" & first.name.x == "D." & first.name.y == "Greg")) %>%
+    filter(!(last.name == "Brown" & first.name.x == "Fred" & first.name.y == "Michael")) %>%
+    filter(!(last.name == "Brown" & first.name.x == "Michael" & first.name.y == "Fred")) %>%
+    filter(!(last.name == "Robinson" & first.name.x == "Bruce" & first.name.y == "Alvin")) %>%
+    filter(!(last.name == "Robinson" & first.name.x == "Alvin" & first.name.y == "Bruce")) %>%
+    filter(!(last.name == "Brown" & first.name.x == "Bo" & first.name.y == "Domonic")) %>%
+    filter(!(last.name == "Brown" & first.name.x == "Domonic" & first.name.y == "Bo")) %>%
+    filter(!(last.name == "Taylor" & first.name.x == "LaMar" & first.name.y == "Willie")) %>%
+    filter(!(last.name == "Taylor" & first.name.x == "Willie" & first.name.y == "LaMar"))
+
+errors <- players[!is.na(players$first.name.y) & !is.na(players$first.name.x), ]
+
+key <- (errors$first.name.x != errors$first.name.y)
+errors <- errors[key, ]
+
+# Add Roster Info for Players who Transferred before joining VCU
+# TODO(awunderground): move this to the roster script
+data_frame("2015", "25", "Antravious", "Simmons", "Sophomore", "6-9", 81, 250, 1, "Miami", "Fl.", "South Miami")
+data_frame("2014", "4", "Terrance", "Shannon", "Senior", "6-8", 80, 240, 1, "Forsyth", "Ga.", "Florida State")
 
 
 
 
-anti_join(players, roster, by = c("first.name", "last.name", "season"))
 
+
+
+boom <- players %>%
+    mutate(minutes = ifelse(season == 2006, minutes * games.played, minutes)) %>%
+    mutate(minutes = ifelse(season == 2009, minutes * games.played, minutes)) %>%
 
 
 

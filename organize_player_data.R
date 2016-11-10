@@ -256,8 +256,10 @@ players <- players %>%
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
     select(season, jersey, player, class, height, height.inches, weight, redshirt, city, state, prior.school) %>%
-    separate(player, " ", into = c("first.name", "last.name"))
-
+    separate(player, " ", into = c("first.name", "last.name")) %>%
+    mutate(first.name = gsub("\\s+", "", first.name)) %>%
+    mutate(last.name = gsub("\\s+", "", last.name))
+               
 write.csv(longitudinal.roster, "data/longitudinal_roster.csv", row.names = FALSE)
 
 # Add position and then impute it for other players
