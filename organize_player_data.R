@@ -149,9 +149,6 @@ rosterScraperB <- function (link) {
     return(boom)
 }
 
-# TODO(awunderground): scrape positions and impute them for the older players based
-# on height, weight, and stats
-
 playersb <- rbind(rosterScraperB(rostersb[1, 3]), 
 rosterScraperB(rostersb[2, 3]),
 rosterScraperB(rostersb[3, 3]),
@@ -247,6 +244,14 @@ players <- players %>%
     mutate(state = trimws(state))
 
 players[291, 3] <- "Drew Johnson"
+
+# Fix Typos
+players <- players %>%
+    mutate(player = ifelse(player == "Will Famani", "Wil", player)) %>%
+    mutate(player = ifelse(player == "Terremce Gibson", "Terrance Gibson", player)) %>%
+    mutate(player = ifelse(player == "Terrence Gibson", "Terrance Gibson", player)) %>%
+    mutate(player = ifelse(player == "Brue Allen", "Bruce Allen", player)) %>%
+    mutate(player = ifelse(player == "Mark Hargett", "Mike Hargett", player))
 
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
