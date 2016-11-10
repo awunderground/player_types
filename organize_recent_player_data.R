@@ -41,6 +41,7 @@ long <- long %>%
     separate(player, sep = "\\\\", into = c("player", "trash")) %>%
     select(-trash) %>%
     mutate(player = ifelse(player == "Ahmed Hamdy Mohamed", "Ahmed Hamdy-Mohamed", player)) %>%
-    separate(player, sep = " ", into = c("first.name", "last.name"))
+    separate(player, sep = " ", into = c("first.name", "last.name")) %>%
+    mutate(first.name = ifelse(first.name == "DJ", "D.J.", first.name))
 
 write.csv(long, "data/recent_longitudinal_player_stats.csv", row.names = FALSE)
