@@ -260,7 +260,7 @@ longitudinal.roster <- players %>%
     mutate(first.name = gsub("\\s+", "", first.name)) %>%
     mutate(last.name = gsub("\\s+", "", last.name))
                
-write.csv(longitudinal.roster, "data/longitudinal_roster.csv", row.names = FALSE)
+write_csv(longitudinal.roster, "data/longitudinal_roster.csv")
 
 # Add position and then impute it for other players
 # impute it again after adding statistics

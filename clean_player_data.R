@@ -1,11 +1,8 @@
 library(stringr)
 library(tidyverse)
 
-old.seasons <- read.csv("data/longitudinal_player_stats.csv", header = TRUE, stringsAsFactors = FALSE)
-recent.seasons <- read.csv("data/recent_longitudinal_player_stats.csv", header = TRUE, stringsAsFactors = FALSE)
-
-old.seasons <- tbl_df(old.seasons)
-recent.seasons <- tbl_df(recent.seasons)
+old.seasons <- read_csv("data/longitudinal_player_stats.csv", col_names = TRUE)
+recent.seasons <- read_csv("data/recent_longitudinal_player_stats.csv", col_names = TRUE)
 
 # Clean up all cells and seasons
 old.seasons <- old.seasons %>%
@@ -90,7 +87,7 @@ opponents <- long %>%
 
 # Merge roster by last name and season 
 
-roster <- read.csv("data/longitudinal_roster.csv", header = TRUE, stringsAsFactors = FALSE)
+roster <- read_csv("data/longitudinal_roster.csv", col_names = TRUE)
 
 players <- left_join(players, roster, by = c("last.name", "season"))
 # This is close, but there are common names 
@@ -100,7 +97,6 @@ errors <- players[!is.na(players$first.name.y) & !is.na(players$first.name.x), ]
 
 key <- (errors$first.name.x != errors$first.name.y)
 errors <- errors[key, ]
-
 
 # Remove Improperly Merged Data
 players <- players %>%
@@ -124,10 +120,6 @@ errors <- errors[key, ]
 # TODO(awunderground): move this to the roster script
 data_frame("2015", "25", "Antravious", "Simmons", "Sophomore", "6-9", 81, 250, 1, "Miami", "Fl.", "South Miami")
 data_frame("2014", "4", "Terrance", "Shannon", "Senior", "6-8", 80, 240, 1, "Forsyth", "Ga.", "Florida State")
-
-
-
-
 
 
 
