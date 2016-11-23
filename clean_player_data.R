@@ -63,11 +63,8 @@ old.seasons <- old.seasons %>%
     mutate(average.points = as.numeric(average.points))
 
 # Clean names
-
 old.seasons <- old.seasons %>%
     separate(player, sep = ", ", into = c("last.name", "first.name"))
-
-# mutate(player = gsub("\\.", "", player)) %>%
 
 # Bind older seasons and recent seasons
 long <- bind_rows(old.seasons, recent.seasons)
@@ -85,8 +82,9 @@ seasons <- long %>%
 opponents <- long %>%
     filter(last.name == "Opponents")
 
-# Merge roster by last name and season 
+rm(long)
 
+# Merge roster by last name and season 
 roster <- read_csv("data/longitudinal_roster.csv", col_names = TRUE)
 
 players <- left_join(players, roster, by = c("last.name", "season"))

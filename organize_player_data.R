@@ -260,6 +260,21 @@ longitudinal.roster <- players %>%
     mutate(first.name = gsub("\\s+", "", first.name)) %>%
     mutate(last.name = gsub("\\s+", "", last.name))
                
+# Players who transferred before the end of the season aren't in the VCU data
+forgotten.transfers <- read_csv("season, jersey, first.name, last.name, class, height, height.inches, weight, redshirt, city, state, prior.school
+2015, 25, Antravious, Simmons, Sophomore, 6-9, 81, 250, 1, Miami, Fl., South Miami
+2014, 4, Terrance, Shannon, Senior, 6-8, 80, 240, 1, Forsyth, Ga., Florida State")
+
+
+
+
+
+
+
+
+
+
+
 write_csv(longitudinal.roster, "data/longitudinal_roster.csv")
 
 # Add position and then impute it for other players
