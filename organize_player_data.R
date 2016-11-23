@@ -251,7 +251,9 @@ players <- players %>%
     mutate(player = ifelse(player == "Terremce Gibson", "Terrance Gibson", player)) %>%
     mutate(player = ifelse(player == "Terrence Gibson", "Terrance Gibson", player)) %>%
     mutate(player = ifelse(player == "Brue Allen", "Bruce Allen", player)) %>%
-    mutate(player = ifelse(player == "Mark Hargett", "Mike Hargett", player))
+    mutate(player = ifelse(player == "Mark Hargett", "Mike Hargett", player)) %>%
+    mutate(player = ifelse(player == "TJ Gwynn", "T.J. Gwynn", player)) %>%
+    filter(player != "T.J. Gwynn" && season != "2006")
 
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
@@ -261,20 +263,16 @@ longitudinal.roster <- players %>%
     mutate(last.name = gsub("\\s+", "", last.name))
                
 # Players who transferred before the end of the season aren't in the VCU data
-forgotten.transfers <- read_csv("season, jersey, first.name, last.name, class, height, height.inches, weight, redshirt, city, state, prior.school
+fixes <- read_csv("season, jersey, first.name, last.name, class, height, height.inches, weight, redshirt, city, state, prior.school
 2015, 25, Antravious, Simmons, Sophomore, 6-9, 81, 250, 1, Miami, Fl., South Miami
-2014, 4, Terrance, Shannon, Senior, 6-8, 80, 240, 1, Forsyth, Ga., Florida State")
-
-
-
-
-
-
-
-
-
-
-
+2014, 4, Terrance, Shannon, Senior, 6-8, 80, 240, 1, Forsyth, Ga., Florida State
+2010, 11, Kirill, Pishchalnikov, Senior, 6-8, 80, 265, 0, Maykop, Russia, MGGTK AGU                                 
+2009, 11, Kirill, Pishchalnikov, Junior, 6-8, 80, 248, 0, Maykop, Russia, MGGTK AGU                               
+2008, 11, Kirill, Pishchalnikov, Sophomore, 6-8, 80, 240, 0, Maykop, Russia, MGGTK AGU  
+2002, 42, L.F., Likcholitov, Senior, 6-11, 83, 250, 1, St. Petersburg, Russia, SPS Tech University")                              
+             
+longitudinal.roster <- rbind(longitudinal.roster, fixes)                        
+                                
 write_csv(longitudinal.roster, "data/longitudinal_roster.csv")
 
 # Add position and then impute it for other players

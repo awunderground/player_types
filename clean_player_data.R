@@ -84,6 +84,10 @@ opponents <- long %>%
 
 rm(long)
 
+# Fix Typos
+players <- players %>%
+    mutate(last.name = ifelse(last.name == "Pischnalikov", "Pishchalnikov", last.name)) 
+
 # Merge roster by last name and season 
 roster <- read_csv("data/longitudinal_roster.csv", col_names = TRUE)
 
@@ -115,9 +119,6 @@ key <- (errors$first.name.x != errors$first.name.y)
 errors <- errors[key, ]
 
 # Add Roster Info for Players who Transferred before joining VCU
-# TODO(awunderground): move this to the roster script
-data_frame("2015", "25", "Antravious", "Simmons", "Sophomore", "6-9", 81, 250, 1, "Miami", "Fl.", "South Miami")
-data_frame("2014", "4", "Terrance", "Shannon", "Senior", "6-8", 80, 240, 1, "Forsyth", "Ga.", "Florida State")
 
 
 
