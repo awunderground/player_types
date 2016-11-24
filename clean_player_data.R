@@ -86,7 +86,8 @@ rm(long)
 
 # Fix Typos
 players <- players %>%
-    mutate(last.name = ifelse(last.name == "Pischnalikov", "Pishchalnikov", last.name)) 
+    mutate(last.name = ifelse(last.name == "Pischnalikov", "Pishchalnikov", last.name)) %>%
+    mutate(last.name = ifelse(last.name == "Gywnn", "Gwynn", last.name))
 
 # Merge roster by last name and season 
 roster <- read_csv("data/longitudinal_roster.csv", col_names = TRUE)
@@ -113,19 +114,20 @@ players <- players %>%
     filter(!(last.name == "Taylor" & first.name.x == "LaMar" & first.name.y == "Willie")) %>%
     filter(!(last.name == "Taylor" & first.name.x == "Willie" & first.name.y == "LaMar"))
 
-errors <- players[!is.na(players$first.name.y) & !is.na(players$first.name.x), ]
+#errors <- players[!is.na(players$first.name.y) & !is.na(players$first.name.x), ]
+#key <- (errors$first.name.x != errors$first.name.y)
+#errors <- errors[key, ]
 
-key <- (errors$first.name.x != errors$first.name.y)
-errors <- errors[key, ]
-
-# Add Roster Info for Players who Transferred before joining VCU
-
-
-
-boom <- players %>%
+# Fix years where minutes are saved as average minutes instead of total minutes
+players <- players %>%
+    mutate(average.minutes = ifelse(season == 2006, minutes, average.minutes)) %>%
     mutate(minutes = ifelse(season == 2006, minutes * games.played, minutes)) %>%
-    mutate(minutes = ifelse(season == 2009, minutes * games.played, minutes)) %>%
+    mutate(average.minutes = ifelse(season == 2009, minutes, average.minutes)) %>%
+    mutate(minutes = ifelse(season == 2009, minutes * games.played, minutes))
 
-
+# 
+players <- players %>%
+    mutate(average.minutes = ifelse(is.na(average.minutes), minutes / games.played, average.minutes)) %>%
+    mutate(average.points = ifelse(is.na(average.points), points / games.played, average.points))
 
 

@@ -253,7 +253,6 @@ players <- players %>%
     mutate(player = ifelse(player == "Brue Allen", "Bruce Allen", player)) %>%
     mutate(player = ifelse(player == "Mark Hargett", "Mike Hargett", player)) %>%
     mutate(player = ifelse(player == "TJ Gwynn", "T.J. Gwynn", player)) %>%
-    filter(player != "T.J. Gwynn" && season != "2006")
 
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
@@ -273,7 +272,7 @@ fixes <- read_csv("season, jersey, first.name, last.name, class, height, height.
              
 longitudinal.roster <- rbind(longitudinal.roster, fixes)                        
                                 
-write_csv(longitudinal.roster, "data/longitudinal_roster.csv")
+#write_csv(longitudinal.roster, "data/longitudinal_roster.csv")
 
 # Add position and then impute it for other players
 # impute it again after adding statistics
