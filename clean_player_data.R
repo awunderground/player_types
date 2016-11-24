@@ -132,7 +132,7 @@ players <- players %>%
 
 # Calculate 2 point field goals and shooting percentages
 players <- players %>%
-    mutate(two.pointers = field.goals - two.pointers) %>%
+    mutate(two.pointers = field.goals - three.pointers) %>%
     mutate(two.point.attempts = field.goal.attempts - three.point.attempts) %>%
     mutate(two.point.prop = two.pointers / two.point.attempts) %>%
     mutate(three.point.prop = three.pointers / three.point.attempts) %>%
@@ -140,6 +140,45 @@ players <- players %>%
 
 # Reorder columns
 players <- players %>%
-    select(season, last.name, first.name.x, first.name.y, everything(), link)
+    select(season, 
+           last.name,
+           first.name.x,        
+           first.name.y,        
+           games.played,       
+           games.started,       
+           minutes,           
+           average.minutes,    
+           field.goals,        
+           field.goal.attempts, 
+           two.pointers,        
+           two.point.attempts,  
+           two.point.prop,  
+           three.pointers,    
+           three.point.attempts,
+           three.point.prop, 
+           free.throws,      
+           free.throw.attempts,
+           free.throw.prop,
+           offensive.rebounds,
+           defensive.rebounds,  
+           assists,           
+           turnovers,           
+           blocks,             
+           steals,            
+           points,            
+           average.points,      
+           total.rebounds,
+           fouls,               
+           foul.outs, 
+           jersey,              
+           class,               
+           height,              
+           height.inches,       
+           weight,              
+           redshirt,            
+           city,                
+           state,               
+           everything(),       
+           link)
 
 write_csv(players, "data/final_player_stats.csv")
