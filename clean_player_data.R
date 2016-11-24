@@ -125,9 +125,21 @@ players <- players %>%
     mutate(average.minutes = ifelse(season == 2009, minutes, average.minutes)) %>%
     mutate(minutes = ifelse(season == 2009, minutes * games.played, minutes))
 
-# 
+# Calculate average minutes per game where NA
 players <- players %>%
     mutate(average.minutes = ifelse(is.na(average.minutes), minutes / games.played, average.minutes)) %>%
     mutate(average.points = ifelse(is.na(average.points), points / games.played, average.points))
 
+# Calculate 2 point field goals and shooting percentages
+players <- players %>%
+    mutate(two.pointers = field.goals - two.pointers) %>%
+    mutate(two.point.attempts = field.goal.attempts - three.point.attempts) %>%
+    mutate(two.point.prop = two.pointers / two.point.attempts) %>%
+    mutate(three.point.prop = three.pointers / three.point.attempts) %>%
+    mutate(free.throw.prop = free.throws / free.throw.attempts)
 
+# Reorder columns
+players <- players %>%
+    select(season, last.name, first.name.x, first.name.y, everything(), link)
+
+write_csv(players, "data/final_player_stats.csv")
