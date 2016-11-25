@@ -1,6 +1,7 @@
 # Analysis with `11 Theus
 # Analysis with 4 years of Theus
 
+library(NbClust)
 library(tidyverse)
 
 # Filer to 1998-2016
@@ -44,9 +45,12 @@ players <- players %>%
     mutate_all(funs(ifelse(is.nan(.), 0, .)))
 
 # Standardize Variables
-
-
-
+players.s <- players %>%
+    mutate_each(funs(scale), average.minutes:pounds.per.inch)
+    
+# NbClust
+NbClust(players[, 4:5], min.nc = 2, max.nc = 4, method = "kmeans")
+# Three is the optimal number of clusters
 
 # TOD)(awunderground): add usage %
 # TODO(awunderground): fix Jamal Shuler
