@@ -3,13 +3,30 @@
 
 library(NbClust)
 library(tidyverse)
+library(useful)
+
+options(scipen = 999)
 
 # Filer to 1998-2016
 players <- read_csv("data/final_player_stats.csv") %>%
     filter(season >= 2000)
 
+# Calculate team minutes per season
+team.minutes <- players %>%
+    select(season, minutes, field.goal.attempts, turnovers, free.throw.attempts) %>%
+    group_by(season) %>%
+    summarize(team.minutes = sum(minutes), 
+              team.field.goal.attempts = sum(field.goal.attempts),
+              team.turnovers = sum(turnovers),
+              team.free.throw.attempts = sum(free.throw.attempts))
+
+# Merge team minutes to player record
+players <- left_join(players, team.minutes, by = "season")
+
 # Variables to use for clustering analysis 
 players <- players %>%
+    mutate(usage = 100 * ((team.minutes / 5) * (field.goal.attempts + (0.44 * free.throw.attempts) + turnovers)) /
+               (minutes * (team.field.goal.attempts + (0.44 * team.free.throw.attempts) + team.turnovers))) %>%
     mutate(points.per.minute = points / minutes) %>%
     mutate(assists.per.minute = assists / minutes) %>%
     mutate(turnovers.per.minute = turnovers / minutes) %>%
@@ -19,18 +36,20 @@ players <- players %>%
     mutate(blocks.per.minute = blocks / minutes) %>%
     mutate(fouls.per.minute = fouls / minutes) %>%
     mutate(pounds.per.inch = weight / height.inches) %>%
+    mutate(true.shooting.attempts = field.goal.attempts + 0.44 * free.throw.attempts) %>%
+    mutate(true.shooting.proportion = points / (2 * true.shooting.attempts)) %>%
+    mutate(free.throw.rate = free.throw.attempts / true.shooting.attempts) %>%
+    mutate(three.point.rate = three.point.attempts / true.shooting.attempts) %>%
     select(season, 
            last.name, 
            first.name.x, 
            average.minutes, 
+           usage,
            games.played,
            points.per.minute,
-           two.point.prop,
-           two.point.attempts, 
-           three.point.prop,
-           three.point.attempts,
-           free.throw.prop,
-           free.throw.attempts, 
+           true.shooting.proportion,
+           free.throw.rate,
+           three.point.rate,
            assists.per.minute,
            turnovers.per.minute,
            offensive.rebounds.per.minute,
@@ -38,20 +57,36 @@ players <- players %>%
            steals.per.minute,
            blocks.per.minute,
            fouls.per.minute, 
-           pounds.per.inch)
+           pounds.per.inch,
+           height.inches)
     
+
+
+
+
+
+
 # Replace undefined shooting proportions with zeroes
 players <- players %>%
     mutate_all(funs(ifelse(is.nan(.), 0, .)))
 
 # Standardize Variables
 players.s <- players %>%
-    mutate_each(funs(scale), average.minutes:pounds.per.inch)
+    mutate_each(funs(scale), average.minutes:height.inches)
     
 # NbClust
-NbClust(players[, 4:5], min.nc = 2, max.nc = 4, method = "kmeans")
+NbClust(players.s[, 4:19], min.nc = 4, max.nc = 10, method = "kmeans")
 # Three is the optimal number of clusters
 
-# TOD)(awunderground): add usage %
+players.clust <- (kmeans(players.s[, 4:19], centers = 4, nstart = 4)) 
+
+
+
+
+
+plot.kmeans(players.clust, data = players.s)
+
+
+
+# TODO(awunderground): Pick a minutes limit
 # TODO(awunderground): fix Jamal Shuler
-# TODO(awunderground): Standardize all inputs
