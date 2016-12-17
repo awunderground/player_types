@@ -9,7 +9,7 @@ options(scipen = 999)
 
 # Filer to 1998-2016
 players <- read_csv("data/final_player_stats.csv") %>%
-    filter(season >= 2000)
+    filter(season >= 2000 & average.minutes >= 4 & games.played >= 5)
 
 # Calculate team minutes per season
 team.minutes <- players %>%
@@ -77,4 +77,3 @@ players.clust <- (kmeans(players.s[, 4:19], centers = 4, nstart = 4))
 plot.kmeans(players.clust, data = players.s)
 
 # TODO(awunderground): Pick a minutes limit
-# TODO(awunderground): fix Jamal Shuler
