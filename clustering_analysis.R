@@ -60,12 +60,6 @@ players <- players %>%
            pounds.per.inch,
            height.inches)
     
-
-
-
-
-
-
 # Replace undefined shooting proportions with zeroes
 players <- players %>%
     mutate_all(funs(ifelse(is.nan(.), 0, .)))

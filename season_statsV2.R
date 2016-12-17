@@ -319,4 +319,8 @@ for (i in 1:nrow(stats)) {
 long <- bind_cols(key, minutes, field.goals, three.pointers, free.throws, 
                   rebounds, fouls, assists, turnovers, blocks, steals, points)
 
-write_csv(long, "data/longitudinal_player_stats.csv")
+# Fix 2008 Jamal Shuler scraping error
+long <- long %>%
+    mutate(fg.fga = ifelse(fg.fga == "172-33.1", "172-391", fg.fga))
+
+#write_csv(long, "data/longitudinal_player_stats.csv")

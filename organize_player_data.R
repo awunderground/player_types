@@ -252,7 +252,7 @@ players <- players %>%
     mutate(player = ifelse(player == "Terrence Gibson", "Terrance Gibson", player)) %>%
     mutate(player = ifelse(player == "Brue Allen", "Bruce Allen", player)) %>%
     mutate(player = ifelse(player == "Mark Hargett", "Mike Hargett", player)) %>%
-    mutate(player = ifelse(player == "TJ Gwynn", "T.J. Gwynn", player)) %>%
+    mutate(player = ifelse(player == "TJ Gwynn", "T.J. Gwynn", player)) 
 
 longitudinal.roster <- players %>%
     mutate(class = class.c) %>%
@@ -260,7 +260,7 @@ longitudinal.roster <- players %>%
     separate(player, " ", into = c("first.name", "last.name")) %>%
     mutate(first.name = gsub("\\s+", "", first.name)) %>%
     mutate(last.name = gsub("\\s+", "", last.name))
-               
+              
 # Players who transferred before the end of the season aren't in the VCU data
 fixes <- read_csv("season, jersey, first.name, last.name, class, height, height.inches, weight, redshirt, city, state, prior.school
 2015, 25, Antravious, Simmons, Sophomore, 6-9, 81, 250, 1, Miami, Fl., South Miami
