@@ -69,11 +69,30 @@ players.s <- players %>%
     mutate_each(funs(scale), average.minutes:height.inches)
     
 # NbClust
-NbClust(players.s[, 4:19], min.nc = 4, max.nc = 10, method = "kmeans")
-# Three is the optimal number of clusters
+NbClust(players.s[, 4:19], min.nc = 4, max.nc = 20, method = "kmeans")
 
-players.clust <- (kmeans(players.s[, 4:19], centers = 4, nstart = 4)) 
+players.clust4 <- kmeans(players.s[, 4:19], centers = 4, nstart = 4)
 
-plot.kmeans(players.clust, data = players.s)
+clusters <- players %>%
+    mutate(cluster4 = players.clust4$cluster) %>%
+    select(average.minutes:cluster4) %>%
+    group_by(cluster4) %>%
+    summarize_all(funs(mean))
+
+boom <- gather(clusters, key = boom, value, -cluster4)
+
+
+
+
+
+
+
+
+plot.kmeans(players.clust4, data = players.s)
 
 # TODO(awunderground): Pick a minutes limit
+
+boom <- players %>%
+    select(season, last.name, first.name.x, pounds.per.inch, height.inches)
+
+
